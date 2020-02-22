@@ -1,8 +1,8 @@
-#include <pthread.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 
-void* run(void* program);
+int run(char* program);
 
 int main(int argc, char** argv)
 {
@@ -12,17 +12,15 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	pthread_t id;
-	for(int i = 1; i < argc; i++) pthread_create(&id, NULL, &run, (void*)argv[i]);
+	for(int i = 1; i < argc; i++) run(argv[i]);
 
-	while(1);
 	return 0;
 }
 
-void* run(void* program)
+int run(char* program)
 {
-	char command[1024];
-	sprintf(command, "mate-terminal -e %s", program);
-	system(command);
-	while(1);
+	int a = fork();
+	if(a == 0) system(program);
+	else return 0;
+	return 1;
 }
